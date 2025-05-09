@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         TaskManager taskManager = new TaskManager();
         taskManager.addTask(new Task("task1", "description", TaskStatus.NEW));
-        taskManager.addTask(new Epic("task2", "description", TaskStatus.NEW));
+        taskManager.addTask(new Task("task2", "description", TaskStatus.NEW));
         taskManager.addEpic(new Epic("epic1", "description", TaskStatus.NEW));
         taskManager.addEpic(new Epic("epic2", "description", TaskStatus.NEW));
         taskManager.addSubtask(new Subtask("subtask1", "description",TaskStatus.NEW, 3));

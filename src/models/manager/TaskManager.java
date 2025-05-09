@@ -6,12 +6,14 @@ import models.tasks.Task;
 import status.TaskStatus;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 public class TaskManager {
-    private HashMap<Integer, Task> taskMap;
-    private HashMap<Integer, Subtask> subtaskMap;
-    private HashMap<Integer, Epic> epicMap;
+    private final HashMap<Integer, Task> taskMap;
+    private final HashMap<Integer, Subtask> subtaskMap;
+    private final HashMap<Integer, Epic> epicMap;
     public static int idCounter = 0;
 
     public TaskManager() {
@@ -62,6 +64,9 @@ public class TaskManager {
     }
 
     public void addTask(Task task) {
+        if (task instanceof Epic || task instanceof Subtask){
+            return;
+        }
         ++idCounter;
         task.setId(idCounter);
         taskMap.put(idCounter, task);
@@ -85,6 +90,9 @@ public class TaskManager {
     }
 
     public void updateTask(Task task) {
+        if (task instanceof Epic || task instanceof Subtask){
+            return;
+        }
         taskMap.put(task.getId(), task);
     }
 
@@ -123,15 +131,15 @@ public class TaskManager {
         }
     }
 
-    public ArrayList<Subtask> getEpicSubtasks(Integer id) {
-        if (epicMap.containsKey(id)) {
-            ArrayList<Subtask> subtasks = new ArrayList<>();
-            for (Integer subtaskId : epicMap.get(id).getSubtasksId()) {
-                subtasks.add(subtaskMap.get(subtaskId));
-            }
-            return subtasks;
+    public List<Subtask> getEpicSubtasks(Integer id) {
+        if (!epicMap.containsKey(id)) {
+            return Collections.emptyList();
         }
-        return null;
+        List<Subtask> subtasks = new ArrayList<>();
+        for (Integer subtaskId : epicMap.get(id).getSubtasksId()) {
+            subtasks.add(subtaskMap.get(subtaskId));
+        }
+        return subtasks;
     }
 
     public void updateEpicStatus(Epic epic) {
@@ -142,12 +150,8 @@ public class TaskManager {
             boolean isSubtasksDone = true;
             for (Integer id : epic.getSubtasksId()) {
                 TaskStatus subtaskStatus = subtaskMap.get(id).getTaskStatus();
-                if (subtaskStatus != TaskStatus.NEW) {
-                    isSubtasksNew = false;
-                }
-                if (subtaskStatus != TaskStatus.DONE) {
-                    isSubtasksDone = false;
-                }
+                isSubtasksNew = isSubtasksNew && subtaskStatus == TaskStatus.NEW;
+                isSubtasksDone = isSubtasksDone && subtaskStatus == TaskStatus.DONE;
             }
             if (isSubtasksDone) {
                 epic.setTaskStatus(TaskStatus.DONE);
