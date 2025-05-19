@@ -16,10 +16,10 @@ public class InMemoryHistoryManager implements HistoryManager{
     @Override
     public <T extends Task> void add(T task){
         if (historyDeque.size() == MAX_HISTORY_ELEMENTS) {
-            historyDeque.removeLast();
-            historyDeque.addFirst(task);
+            historyDeque.removeFirst();
+            historyDeque.addLast(task);
         } else {
-            historyDeque.addFirst(task);
+            historyDeque.addLast(task);
         }
     }
 

@@ -25,7 +25,7 @@ public class InMemoryTaskManager implements TaskManager {
         this.historyManager = historyManager;
     }
 
-    public HistoryManager getHistoryManager(){
+    public HistoryManager getHistoryManager() {
         return historyManager;
     }
 
@@ -88,6 +88,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public int addTask(Task task) {
         if (task instanceof Epic || task instanceof Subtask) {
+            System.out.println("Не удалось добавить задачу. Неверный тип");
             return -1;
         }
         ++idCounter;
@@ -120,9 +121,15 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task) {
         if (task instanceof Epic || task instanceof Subtask) {
+            System.out.println("Не удалось обновить задачу. Неверный тип");
             return;
         }
-        taskMap.put(task.getId(), task);
+        int taskId = task.getId();
+        if (taskMap.containsKey(taskId)) {
+            taskMap.put(taskId, task);
+        } else {
+            System.out.println("Не удалось обновить задачу. Задача не найдена");
+        }
     }
 
     @Override
@@ -174,16 +181,13 @@ public class InMemoryTaskManager implements TaskManager {
         for (Integer subtaskId : epicMap.get(id).getSubtasksId()) {
             Subtask subtask = subtaskMap.get(subtaskId);
             subtasks.add(subtask);
-            historyManager.add(subtask);
         }
         return subtasks;
     }
 
     @Override
     public void updateEpicStatus(Epic epic) {
-        if (epic.getSubtasksId().isEmpty()) {
-            epic.setTaskStatus(TaskStatus.NEW);
-        } else {
+        if (!epic.getSubtasksId().isEmpty()) {
             boolean isSubtasksNew = true;
             boolean isSubtasksDone = true;
             for (Integer id : epic.getSubtasksId()) {

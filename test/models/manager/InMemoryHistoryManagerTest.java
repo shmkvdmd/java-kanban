@@ -37,7 +37,7 @@ class InMemoryHistoryManagerTest {
         for (int i = 0; i < 15; ++i){
             int taskId = taskManager.addTask(new Task("task", "description", TaskStatus.NEW));
             if (i >= 5){
-                tasks.addFirst(taskManager.getTaskById(taskId));
+                tasks.add(taskManager.getTaskById(taskId));
             } else{
                 taskManager.getTaskById(taskId);
             }
