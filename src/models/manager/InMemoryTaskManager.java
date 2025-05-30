@@ -147,7 +147,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteTaskById(Integer id) {
-        taskMap.remove(id);
+        if (taskMap.containsKey(id)){
+            taskMap.remove(id);
+            historyManager.remove(id);
+        } else {
+            System.out.println("Задача не найдена");
+        }
     }
 
     @Override
@@ -157,7 +162,10 @@ public class InMemoryTaskManager implements TaskManager {
             Epic epic = epicMap.get(subtask.getEpicId());
             epic.getSubtasksId().remove(id);
             subtaskMap.remove(id);
+            historyManager.remove(id);
             updateEpicStatus(epic);
+        } else {
+            System.out.println("Подзадача не найдена");
         }
     }
 
@@ -169,6 +177,9 @@ public class InMemoryTaskManager implements TaskManager {
                 subtaskMap.remove(subtaskId);
             }
             epicMap.remove(id);
+            historyManager.remove(id);
+        } else {
+            System.out.println("Эпик не найден");
         }
     }
 
