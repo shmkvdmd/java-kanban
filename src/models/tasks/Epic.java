@@ -1,4 +1,5 @@
 package models.tasks;
+
 import status.TaskStatus;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ public class Epic extends Task {
         subtasksId = new ArrayList<>();
     }
 
-    public ArrayList<Integer> getSubtasksId(){
+    public ArrayList<Integer> getSubtasksId() {
         return subtasksId;
     }
 

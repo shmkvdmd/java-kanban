@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayDeque;
 
 public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> taskMap;
@@ -147,7 +146,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteTaskById(Integer id) {
-        if (taskMap.containsKey(id)){
+        if (taskMap.containsKey(id)) {
             taskMap.remove(id);
             historyManager.remove(id);
         } else {
