@@ -49,26 +49,26 @@ public class Task {
     }
 
     @Override
-    public boolean equals(Object obj){
-        if (this == obj){
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (obj == null || this.getClass() != obj.getClass()){
+        if (obj == null || this.getClass() != obj.getClass()) {
             return false;
         }
-        Task task = (Task)obj;
+        Task task = (Task) obj;
         return Objects.equals(taskName, task.getTaskName())
                 && Objects.equals(taskDescription, task.getTaskDescription())
                 && Objects.equals(id, task.getId()) && Objects.equals(taskStatus, task.getTaskStatus());
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return Objects.hash(id);
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "Task{taskName='" + taskName + "', taskDescription='" + taskDescription +
                 "', id='" + id + "', taskStatus='" + taskStatus.name() + "'}";
     }
