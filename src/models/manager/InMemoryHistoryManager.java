@@ -52,7 +52,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     private List<Task> getTasks() {
         if (head == null) {
-            return null;
+            return new ArrayList<>();
         }
         List<Task> tasks = new ArrayList<>();
         Node tempNode = head;

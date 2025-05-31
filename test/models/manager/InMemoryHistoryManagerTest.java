@@ -21,7 +21,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void shouldBeUnique(){
+    public void shouldBeUnique() {
         int id = taskManager.addTask(new Task("name1", "description", TaskStatus.NEW));
         taskManager.getTaskById(id);
         taskManager.getTaskById(id);
@@ -32,7 +32,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void shouldAddElementsToHistory(){
+    public void shouldAddElementsToHistory() {
         int idFirst = taskManager.addTask(new Task("name1", "description", TaskStatus.NEW));
         int idSecond = taskManager.addTask(new Task("name2", "description", TaskStatus.NEW));
         int idThird = taskManager.addTask(new Task("name3", "description", TaskStatus.NEW));
@@ -45,7 +45,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void shouldRemoveFromHistory(){
+    public void shouldRemoveFromHistory() {
         int idFirst = taskManager.addTask(new Task("name1", "description", TaskStatus.NEW));
         int idSecond = taskManager.addTask(new Task("name2", "description", TaskStatus.NEW));
         taskManager.getTaskById(idFirst);
@@ -54,5 +54,32 @@ class InMemoryHistoryManagerTest {
         List<Task> historyList = taskManager.getHistoryManager().getHistory();
         int listSize = 1;
         assertEquals(listSize, historyList.size(), "Просмотр сохраняется после удаления задачи");
+    }
+
+    @Test
+    public void shouldNotBeNPE() {
+        int id = taskManager.addTask(new Task("name1", "description", TaskStatus.NEW));
+        taskManager.getTaskById(id + 2);
+    }
+
+    @Test
+    public void shouldNotBeNPEWhenAddNull() {
+        int id = taskManager.addTask(new Task("name1", "description", TaskStatus.NEW));
+        int id2 = taskManager.addTask(null);
+    }
+
+    @Test
+    void removeTaskShouldNotThrowNpeWhenSingleTask() {
+        HistoryManager manager = taskManager.getHistoryManager();
+        Task task = new Task("Test", "Description", TaskStatus.NEW);
+        task.setId(1);
+        manager.add(task);
+
+        assertDoesNotThrow(
+                () -> manager.remove(task.getId()),
+                "Удаление единственной задачи вызвало NPE"
+        );
+
+        assertTrue(manager.getHistory().isEmpty(), "История должна быть пустой после удаления");
     }
 }

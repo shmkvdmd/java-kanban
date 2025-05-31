@@ -66,42 +66,49 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskById(Integer id) {
         Task task = taskMap.get(id);
-        historyManager.add(task);
+        if (task != null) {
+            historyManager.add(task);
+        }
         return task;
     }
 
     @Override
     public Subtask getSubtaskById(Integer id) {
         Subtask subtask = subtaskMap.get(id);
-        historyManager.add(subtask);
+        if (subtask != null) {
+            historyManager.add(subtask);
+        }
         return subtask;
     }
 
     @Override
     public Epic getEpicById(Integer id) {
         Epic epic = epicMap.get(id);
-        historyManager.add(epic);
+        if (epic != null) {
+            historyManager.add(epic);
+        }
         return epic;
     }
 
     @Override
     public int addTask(Task task) {
+        if (task == null) {
+            return -2;
+        }
         if (task instanceof Epic || task instanceof Subtask) {
             System.out.println("Не удалось добавить задачу. Неверный тип");
             return -1;
         }
-        ++idCounter;
-        task.setId(idCounter);
+        task.setId(++idCounter);
         taskMap.put(idCounter, task);
         return idCounter;
     }
 
     @Override
     public int addSubtask(Subtask subtask) {
-        ++idCounter;
-        subtask.setId(idCounter);
         Epic epic = epicMap.get(subtask.getEpicId());
         if (epic != null) {
+            subtask.setId(++idCounter);
             epic.getSubtasksId().add(idCounter);
             subtaskMap.put(idCounter, subtask);
             updateEpicStatus(epic);
@@ -111,8 +118,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int addEpic(Epic epic) {
-        ++idCounter;
-        epic.setId(idCounter);
+        epic.setId(++idCounter);
         epicMap.put(idCounter, epic);
         return idCounter;
     }
