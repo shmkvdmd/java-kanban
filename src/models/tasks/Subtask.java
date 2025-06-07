@@ -2,14 +2,15 @@ package models.tasks;
 
 import status.TaskStatus;
 
-public class Subtask extends Task{
+public class Subtask extends Task {
     private final int epicId;
+
     public Subtask(String taskName, String taskDescription, TaskStatus taskStatus, int epicId) {
         super(taskName, taskDescription, taskStatus);
         this.epicId = epicId;
     }
 
-    public int getEpicId(){
+    public int getEpicId() {
         return epicId;
     }
 
