@@ -7,34 +7,32 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import status.TaskStatus;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
     private TaskManager taskManager;
 
     @BeforeEach
-    public void beforeEach(){
-        taskManager = Managers.getDefault(Managers.getDefaultHistory());
+    public void beforeEach() {
+        taskManager = new InMemoryTaskManager();
     }
 
     @Test
-    public void shouldAddTaskToManager(){
+    public void shouldAddTaskToManager() {
         Task task = new Task("name", "description", TaskStatus.NEW);
         taskManager.addTask(task);
         assertEquals(task, taskManager.getTaskById(task.getId()));
     }
 
     @Test
-    public void shouldAddEpicToManager(){
+    public void shouldAddEpicToManager() {
         Epic epic = new Epic("name", "description", TaskStatus.NEW);
         taskManager.addEpic(epic);
         assertEquals(epic, taskManager.getEpicById(epic.getId()));
     }
 
     @Test
-    public void shouldAddSubtaskToManager(){
+    public void shouldAddSubtaskToManager() {
         Epic epic = new Epic("name", "description", TaskStatus.NEW);
         taskManager.addEpic(epic);
         Subtask subtask = new Subtask("name", "description", TaskStatus.NEW, epic.getId());
@@ -43,7 +41,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void shouldNotAddEpicOrSubtaskInTask(){
+    public void shouldNotAddEpicOrSubtaskInTask() {
         Epic epic = new Epic("name", "description", TaskStatus.NEW);
         Subtask subtask = new Subtask("name", "description", TaskStatus.NEW, epic.getId());
         assertTrue(taskManager.addTask(epic) < 0);
@@ -51,7 +49,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void shouldAddDifferentTasksAndFindById(){
+    public void shouldAddDifferentTasksAndFindById() {
         Task task = new Task("name", "description", TaskStatus.NEW);
         Epic epic = new Epic("name", "description", TaskStatus.NEW);
         taskManager.addTask(task);

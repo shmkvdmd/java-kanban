@@ -1,9 +1,15 @@
 package models.manager;
 
+import java.io.File;
+
 public class Managers {
 
-    public static TaskManager getDefault(HistoryManager historyManager) {
-        return new InMemoryTaskManager(historyManager);
+    public static TaskManager getDefault() {
+        return new InMemoryTaskManager();
+    }
+
+    public static FileBackendTaskManager getDefaultFileManager() {
+        return new FileBackendTaskManager(new File("data.csv"));
     }
 
     public static HistoryManager getDefaultHistory() {

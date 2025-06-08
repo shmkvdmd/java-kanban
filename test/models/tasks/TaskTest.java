@@ -1,6 +1,5 @@
 package models.tasks;
 
-import models.manager.InMemoryTaskManager;
 import models.manager.Managers;
 import models.manager.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +16,7 @@ class TaskTest {
     
     @BeforeEach
     public void beforeEach(){
-        taskManager = Managers.getDefault(Managers.getDefaultHistory());
+        taskManager = Managers.getDefault();
         task = new Task("task1", "description1", TaskStatus.NEW);
         epic = new Epic("epic1", "description1", TaskStatus.NEW);
     }
