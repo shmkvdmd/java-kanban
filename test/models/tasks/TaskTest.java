@@ -17,7 +17,7 @@ class TaskTest {
     
     @BeforeEach
     public void beforeEach(){
-        taskManager = Managers.getDefault(Managers.getDefaultHistory());
+        taskManager = Managers.getDefault();
         task = new Task("task1", "description1", TaskStatus.NEW);
         epic = new Epic("epic1", "description1", TaskStatus.NEW);
     }
