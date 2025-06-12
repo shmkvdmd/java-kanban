@@ -1,6 +1,7 @@
 package models.tasks;
 
 import status.TaskStatus;
+import status.TaskType;
 
 public class Subtask extends Task {
     private final int epicId;
@@ -8,6 +9,10 @@ public class Subtask extends Task {
     public Subtask(String taskName, String taskDescription, TaskStatus taskStatus, int epicId) {
         super(taskName, taskDescription, taskStatus);
         this.epicId = epicId;
+    }
+    @Override
+    public TaskType getType(){
+        return TaskType.SUBTASK;
     }
 
     public int getEpicId() {

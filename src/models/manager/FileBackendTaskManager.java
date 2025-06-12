@@ -12,6 +12,13 @@ import java.util.Map;
 
 public class FileBackendTaskManager extends InMemoryTaskManager {
     private final File file;
+    private final static int CSV_ID_INDEX = 0;
+    private final static int CSV_TYPE_INDEX = 1;
+    private final static int CSV_NAME_INDEX = 2;
+    private final static int CSV_STATUS_INDEX = 3;
+    private final static int CSV_DESCRIPTION_INDEX = 4;
+    private final static int CSV_EPIC_ID_INDEX = 5;
+    private boolean isLoadingFlag = false;
 
     public FileBackendTaskManager(File file) {
         if (file == null) {
@@ -40,19 +47,19 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
 
     private String taskToString(Task task) {
         String epicId = task instanceof Subtask ? String.valueOf(((Subtask) task).getEpicId()) : "";
-        String[] list = {String.valueOf(task.getId()), getTaskType(task).toString(), task.getTaskName(),
+        String[] list = {String.valueOf(task.getId()), task.getType().toString(), task.getTaskName(),
                 task.getTaskStatus().toString(), task.getTaskDescription(), epicId};
         return String.join(",", list);
     }
 
     private Task taskFromString(String value) {
         String[] list = value.split(",");
-        Integer id = Integer.parseInt(list[0]);
-        String type = list[1];
-        String name = list[2];
-        TaskStatus status = TaskStatus.valueOf(list[3]);
-        String description = list[4];
-        Integer subtaskEpicId = type.equals(TaskType.SUBTASK.toString()) ? Integer.parseInt(list[5]) : null;
+        Integer id = Integer.parseInt(list[CSV_ID_INDEX]);
+        String type = list[CSV_TYPE_INDEX];
+        String name = list[CSV_NAME_INDEX];
+        TaskStatus status = TaskStatus.valueOf(list[CSV_STATUS_INDEX]);
+        String description = list[CSV_DESCRIPTION_INDEX];
+        Integer subtaskEpicId = type.equals(TaskType.SUBTASK.toString()) ? Integer.parseInt(list[CSV_EPIC_ID_INDEX]) : null;
         switch (type) {
             case "EPIC": {
                 Epic epic = new Epic(name, description, status);
@@ -75,21 +82,13 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
         }
     }
 
-    private TaskType getTaskType(Task task) {
-        if (task instanceof Epic) {
-            return TaskType.EPIC;
-        } else if (task instanceof Subtask) {
-            return TaskType.SUBTASK;
-        } else {
-            return TaskType.TASK;
-        }
-    }
-
     public void loadFromFile(File file) {
         if (!file.exists()) {
             System.out.println("Файла не существует");
             return;
         }
+        isLoadingFlag = true;
+        int id = idCounter;
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line = br.readLine();
             while (br.ready()) {
@@ -105,9 +104,14 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
                 } else {
                     addTask(task);
                 }
+                id = Math.max(id, task.getId());
             }
+            idCounter = id;
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при чтении данных из файла " + file.getAbsolutePath());
+        } finally {
+            isLoadingFlag = false;
+            save();
         }
     }
 
@@ -132,21 +136,27 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
     @Override
     public int addTask(Task task) {
         int id = super.addTask(task);
-        save();
+        if (!isLoadingFlag) {
+            save();
+        }
         return id;
     }
 
     @Override
     public int addSubtask(Subtask subtask) {
         int id = super.addSubtask(subtask);
-        save();
+        if (!isLoadingFlag) {
+            save();
+        }
         return id;
     }
 
     @Override
     public int addEpic(Epic epic) {
         int id = super.addEpic(epic);
-        save();
+        if (!isLoadingFlag) {
+            save();
+        }
         return id;
     }
 

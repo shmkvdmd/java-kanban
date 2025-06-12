@@ -1,6 +1,7 @@
 package models.tasks;
 
 import status.TaskStatus;
+import status.TaskType;
 
 import java.util.Objects;
 
@@ -18,6 +19,10 @@ public class Task {
 
     public String getTaskDescription() {
         return taskDescription;
+    }
+
+    public TaskType getType(){
+        return TaskType.TASK;
     }
 
     public void setTaskDescription(String taskDescription) {
