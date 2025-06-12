@@ -12,13 +12,13 @@ import java.util.Map;
 
 public class FileBackendTaskManager extends InMemoryTaskManager {
     private final File file;
-    private final static int CSV_ID_INDEX = 0;
-    private final static int CSV_TYPE_INDEX = 1;
-    private final static int CSV_NAME_INDEX = 2;
-    private final static int CSV_STATUS_INDEX = 3;
-    private final static int CSV_DESCRIPTION_INDEX = 4;
-    private final static int CSV_EPIC_ID_INDEX = 5;
     private boolean isLoadingFlag = false;
+    private static final int CSV_ID_INDEX = 0;
+    private static final int CSV_TYPE_INDEX = 1;
+    private static final int CSV_NAME_INDEX = 2;
+    private static final int CSV_STATUS_INDEX = 3;
+    private static final int CSV_DESCRIPTION_INDEX = 4;
+    private static final int CSV_EPIC_ID_INDEX = 5;
 
     public FileBackendTaskManager(File file) {
         if (file == null) {
