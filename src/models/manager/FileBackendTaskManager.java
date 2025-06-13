@@ -12,7 +12,6 @@ import java.util.Map;
 
 public class FileBackendTaskManager extends InMemoryTaskManager {
     private final File file;
-    private boolean isLoadingFlag = false;
     private static final int CSV_ID_INDEX = 0;
     private static final int CSV_TYPE_INDEX = 1;
     private static final int CSV_NAME_INDEX = 2;
@@ -87,8 +86,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
             System.out.println("Файла не существует");
             return;
         }
-        isLoadingFlag = true;
-        int id = idCounter;
+        int maxId = 0;
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line = br.readLine();
             while (br.ready()) {
@@ -97,20 +95,25 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
                     continue;
                 }
                 Task task = taskFromString(line);
+                int taskId = task.getId();
+                maxId = Math.max(maxId, taskId);
                 if (task instanceof Epic) {
-                    addEpic((Epic) task);
+                    epicMap.put(taskId, (Epic) task);
                 } else if (task instanceof Subtask) {
-                    addSubtask((Subtask) task);
+                    Subtask subtask = (Subtask) task;
+                    subtaskMap.put(taskId, subtask);
+                    Epic epic = epicMap.get(subtask.getEpicId());
+                    if (epic != null) {
+                        epic.getSubtasksId().add(taskId);
+                    }
                 } else {
-                    addTask(task);
+                    taskMap.put(taskId, task);
+                    idCounter = maxId;
                 }
-                id = Math.max(id, task.getId());
             }
-            idCounter = id;
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при чтении данных из файла " + file.getAbsolutePath());
         } finally {
-            isLoadingFlag = false;
             save();
         }
     }
@@ -136,27 +139,21 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
     @Override
     public int addTask(Task task) {
         int id = super.addTask(task);
-        if (!isLoadingFlag) {
-            save();
-        }
+        save();
         return id;
     }
 
     @Override
     public int addSubtask(Subtask subtask) {
         int id = super.addSubtask(subtask);
-        if (!isLoadingFlag) {
-            save();
-        }
+        save();
         return id;
     }
 
     @Override
     public int addEpic(Epic epic) {
         int id = super.addEpic(epic);
-        if (!isLoadingFlag) {
-            save();
-        }
+        save();
         return id;
     }
 

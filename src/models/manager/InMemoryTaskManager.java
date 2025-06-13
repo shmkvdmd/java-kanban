@@ -15,7 +15,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Subtask> subtaskMap;
     protected final HashMap<Integer, Epic> epicMap;
     private final HistoryManager historyManager;
-    public static int idCounter = 0;
+    public int idCounter = 0;
 
     public InMemoryTaskManager() {
         this.taskMap = new HashMap<>();
