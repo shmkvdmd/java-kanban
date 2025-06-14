@@ -54,29 +54,29 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
     private Task taskFromString(String value) {
         String[] list = value.split(",");
         Integer id = Integer.parseInt(list[CSV_ID_INDEX]);
-        String type = list[CSV_TYPE_INDEX];
+        TaskType type = TaskType.valueOf(list[CSV_TYPE_INDEX]);
         String name = list[CSV_NAME_INDEX];
         TaskStatus status = TaskStatus.valueOf(list[CSV_STATUS_INDEX]);
         String description = list[CSV_DESCRIPTION_INDEX];
-        Integer subtaskEpicId = type.equals(TaskType.SUBTASK.toString()) ? Integer.parseInt(list[CSV_EPIC_ID_INDEX]) : null;
+        Integer subtaskEpicId = (type == TaskType.SUBTASK) ? Integer.parseInt(list[CSV_EPIC_ID_INDEX]) : null;
         switch (type) {
-            case "EPIC": {
+            case TaskType.EPIC: {
                 Epic epic = new Epic(name, description, status);
                 epic.setId(id);
                 return epic;
             }
-            case "SUBTASK": {
+            case TaskType.SUBTASK: {
                 Subtask subtask = new Subtask(name, description, status, subtaskEpicId);
                 subtask.setId(id);
                 return subtask;
             }
-            case "TASK": {
+            case TaskType.TASK: {
                 Task task = new Task(name, description, status);
                 task.setId(id);
                 return task;
             }
             default: {
-                return null;
+                throw new IllegalArgumentException("Неизвестный тип задачи: " + type);
             }
         }
     }
@@ -97,24 +97,38 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
                 Task task = taskFromString(line);
                 int taskId = task.getId();
                 maxId = Math.max(maxId, taskId);
-                if (task instanceof Epic) {
-                    epicMap.put(taskId, (Epic) task);
-                } else if (task instanceof Subtask) {
-                    Subtask subtask = (Subtask) task;
-                    subtaskMap.put(taskId, subtask);
-                    Epic epic = epicMap.get(subtask.getEpicId());
-                    if (epic != null) {
-                        epic.getSubtasksId().add(taskId);
-                    }
-                } else {
-                    taskMap.put(taskId, task);
-                    idCounter = maxId;
-                }
+                addTaskByType(task, taskId);
             }
+            idCounter = maxId;
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при чтении данных из файла " + file.getAbsolutePath());
         } finally {
             save();
+        }
+    }
+
+    public void addTaskByType(Task task, int taskId) {
+        switch (task.getType()) {
+            case TaskType.EPIC: {
+                epicMap.put(taskId, (Epic) task);
+                break;
+            }
+            case TaskType.SUBTASK: {
+                Subtask subtask = (Subtask) task;
+                subtaskMap.put(taskId, subtask);
+                Epic epic = epicMap.get(subtask.getEpicId());
+                if (epic != null) {
+                    epic.getSubtasksId().add(taskId);
+                }
+                break;
+            }
+            case TaskType.TASK: {
+                taskMap.put(taskId, task);
+                break;
+            }
+            default: {
+                throw new IllegalArgumentException("Неизвестный тип задачи: " + task.getType());
+            }
         }
     }
 
