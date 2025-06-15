@@ -45,7 +45,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
     }
 
     private String taskToString(Task task) {
-        String epicId = task instanceof Subtask ? String.valueOf(((Subtask) task).getEpicId()) : "";
+        String epicId = task.getType() == TaskType.SUBTASK ? String.valueOf(((Subtask) task).getEpicId()) : "";
         String[] list = {String.valueOf(task.getId()), task.getType().toString(), task.getTaskName(),
                 task.getTaskStatus().toString(), task.getTaskDescription(), epicId};
         return String.join(",", list);
@@ -100,10 +100,9 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
                 addTaskByType(task, taskId);
             }
             idCounter = maxId;
+            save();
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при чтении данных из файла " + file.getAbsolutePath());
-        } finally {
-            save();
         }
     }
 
