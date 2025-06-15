@@ -5,9 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import status.TaskStatus;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,7 +14,7 @@ class InMemoryHistoryManagerTest {
 
     @BeforeEach
     public void beforeEach() {
-        taskManager = Managers.getDefault(Managers.getDefaultHistory());
+        taskManager = new InMemoryTaskManager();
     }
 
     @Test
