@@ -3,6 +3,8 @@ package models.tasks;
 import status.TaskStatus;
 import status.TaskType;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -10,11 +12,40 @@ public class Task {
     protected String taskDescription;
     protected int id;
     protected TaskStatus taskStatus;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
-    public Task(String taskName, String taskDescription, TaskStatus taskStatus) {
+    public Task(String taskName, String taskDescription, TaskStatus taskStatus,
+                LocalDateTime startTime, Duration duration) {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.taskStatus = taskStatus;
+        this.startTime = startTime;
+        this.duration = duration;
+    }
+
+    public LocalDateTime getEndTime() {
+        if (startTime == null || duration == null) {
+            return null;
+        }
+        return startTime.plus(duration);
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 
     public String getTaskDescription() {
