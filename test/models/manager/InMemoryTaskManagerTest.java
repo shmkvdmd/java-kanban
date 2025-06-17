@@ -7,58 +7,36 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import status.TaskStatus;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-class InMemoryTaskManagerTest {
-    private TaskManager taskManager;
+class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
-    @BeforeEach
-    public void beforeEach() {
-        taskManager = new InMemoryTaskManager();
+    @Override
+    protected InMemoryTaskManager createManager() {
+        return new InMemoryTaskManager();
     }
 
     @Test
-    public void shouldAddTaskToManager() {
-        Task task = new Task("name", "description", TaskStatus.NEW);
-        taskManager.addTask(task);
-        assertEquals(task, taskManager.getTaskById(task.getId()));
+    void shouldReturnPrioritizedTasks() {
+        Task task1 = new Task("Task1", "Desc", TaskStatus.NEW, LocalDateTime.now(),
+                Duration.ofMinutes(30));
+        Task task2 = new Task("Task2", "Desc", TaskStatus.NEW, LocalDateTime.now().plusHours(1),
+                Duration.ofMinutes(30));
+        taskManager.addTask(task1);
+        taskManager.addTask(task2);
+        List<Task> prioritizedTasks = taskManager.getPrioritizedTasks();
+        assertEquals(2, prioritizedTasks.size(), "Некорректное количество приоритетных задач");
+        assertTrue(prioritizedTasks.get(0).getStartTime().isBefore(prioritizedTasks.get(1).getStartTime()),
+                "Задачи не отсортированы по времени");
     }
 
     @Test
-    public void shouldAddEpicToManager() {
-        Epic epic = new Epic("name", "description", TaskStatus.NEW);
-        taskManager.addEpic(epic);
-        assertEquals(epic, taskManager.getEpicById(epic.getId()));
+    void shouldReturnEmptyPrioritizedTasksWhenNoTasks() {
+        List<Task> prioritizedTasks = taskManager.getPrioritizedTasks();
+        assertTrue(prioritizedTasks.isEmpty(), "Приоритетный список должен быть пустым");
     }
-
-    @Test
-    public void shouldAddSubtaskToManager() {
-        Epic epic = new Epic("name", "description", TaskStatus.NEW);
-        taskManager.addEpic(epic);
-        Subtask subtask = new Subtask("name", "description", TaskStatus.NEW, epic.getId());
-        taskManager.addSubtask(subtask);
-        assertEquals(subtask, taskManager.getSubtaskById(subtask.getId()));
-    }
-
-    @Test
-    public void shouldNotAddEpicOrSubtaskInTask() {
-        Epic epic = new Epic("name", "description", TaskStatus.NEW);
-        Subtask subtask = new Subtask("name", "description", TaskStatus.NEW, epic.getId());
-        assertTrue(taskManager.addTask(epic) < 0);
-        assertTrue(taskManager.addTask(subtask) < 0);
-    }
-
-    @Test
-    public void shouldAddDifferentTasksAndFindById() {
-        Task task = new Task("name", "description", TaskStatus.NEW);
-        Epic epic = new Epic("name", "description", TaskStatus.NEW);
-        taskManager.addTask(task);
-        taskManager.addEpic(epic);
-        Subtask subtask = new Subtask("name", "description", TaskStatus.NEW, epic.getId());
-        taskManager.addSubtask(subtask);
-        assertEquals(task, taskManager.getTaskById(task.getId()), "Задача не найдена");
-        assertEquals(subtask, taskManager.getSubtaskById(subtask.getId()), "Подзадача не найдена");
-        assertEquals(epic, taskManager.getEpicById(epic.getId()), "Эпик не найден");
-    }
-
 }
