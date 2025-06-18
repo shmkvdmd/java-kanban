@@ -1,8 +1,9 @@
-package models.tasks;
+package ru.common.models.tasks;
 
-import status.TaskStatus;
-import status.TaskType;
+import ru.common.models.tasks.status.TaskStatus;
+import ru.common.models.tasks.status.TaskType;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +13,14 @@ public class Epic extends Task {
     private LocalDateTime endTime;
 
     public Epic(String taskName, String taskDescription, TaskStatus taskStatus) {
-        super(taskName, taskDescription, taskStatus, null, null);
+        super(taskName, taskDescription, taskStatus, LocalDateTime.now(), Duration.ZERO);
         subtasksId = new ArrayList<>();
+    }
+
+    public Epic(String taskName, String taskDescription, TaskStatus taskStatus, LocalDateTime startTime,
+                Duration duration) {
+        super(taskName, taskDescription, taskStatus, startTime, duration);
+        subtasksId = new ArrayList<>(); // Возможно стоит использовать set?
     }
 
     @Override

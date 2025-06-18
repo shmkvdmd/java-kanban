@@ -1,9 +1,9 @@
-package models.manager;
+package ru.common.manager;
 
-import models.tasks.Epic;
-import models.tasks.Subtask;
-import models.tasks.Task;
-import status.TaskStatus;
+import ru.common.models.tasks.Epic;
+import ru.common.models.tasks.Subtask;
+import ru.common.models.tasks.Task;
+import ru.common.models.tasks.status.TaskStatus;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

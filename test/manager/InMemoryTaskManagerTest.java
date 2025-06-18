@@ -1,13 +1,14 @@
-package models.manager;
+package manager;
 
-import models.tasks.Task;
+import ru.common.models.tasks.Task;
 import org.junit.jupiter.api.Test;
-import status.TaskStatus;
+import ru.common.manager.InMemoryTaskManager;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static manager.utility.MockData.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
@@ -18,10 +19,9 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 
     @Test
     void shouldReturnPrioritizedTasks() {
-        Task task1 = new Task("Task1", "Desc", TaskStatus.NEW, LocalDateTime.now(),
-                Duration.ofMinutes(30));
-        Task task2 = new Task("Task2", "Desc", TaskStatus.NEW, LocalDateTime.now().plusHours(1),
-                Duration.ofMinutes(30));
+        LocalDateTime dateTime = LocalDateTime.now();
+        Task task1 = createTask(dateTime, Duration.ofMinutes(30));
+        Task task2 = createTask(dateTime.plusHours(1), Duration.ofMinutes(30));
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         List<Task> prioritizedTasks = taskManager.getPrioritizedTasks();

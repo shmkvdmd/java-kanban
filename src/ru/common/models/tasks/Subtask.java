@@ -1,7 +1,7 @@
-package models.tasks;
+package ru.common.models.tasks;
 
-import status.TaskStatus;
-import status.TaskType;
+import ru.common.models.tasks.status.TaskStatus;
+import ru.common.models.tasks.status.TaskType;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

@@ -1,13 +1,16 @@
-package models.manager;
+package manager;
 
-import models.tasks.Epic;
-import models.tasks.Subtask;
-import models.tasks.Task;
+import ru.common.models.tasks.Epic;
+import ru.common.models.tasks.Subtask;
+import ru.common.models.tasks.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import status.TaskStatus;
+import static manager.utility.MockData.*;
+
+import ru.common.manager.TaskManager;
+import ru.common.models.tasks.status.TaskStatus;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -25,12 +28,11 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldSetEpicStatusNewWhenAllSubtasksNew() {
-        Epic epic = new Epic("Epic1", "Desc", TaskStatus.NEW);
+        Epic epic = createEpic();
         int epicId = taskManager.addEpic(epic);
-        Subtask subtask1 = new Subtask("Sub1", "Desc", TaskStatus.NEW, LocalDateTime.now(),
-                Duration.ofMinutes(30), epicId);
-        Subtask subtask2 = new Subtask("Sub2", "Desc", TaskStatus.NEW,
-                LocalDateTime.now().plusHours(1), Duration.ofMinutes(30), epicId);
+        LocalDateTime dateTime = LocalDateTime.now();
+        Subtask subtask1 = createSubtask(dateTime, Duration.ofMinutes(30), epicId);
+        Subtask subtask2 = createSubtask(dateTime.plusHours(1), Duration.ofMinutes(30), epicId);
         taskManager.addSubtask(subtask1);
         taskManager.addSubtask(subtask2);
         Epic updatedEpic = taskManager.getEpicById(epicId);
@@ -39,12 +41,13 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldSetEpicStatusDoneWhenAllSubtasksDone() {
-        Epic epic = new Epic("Epic1", "Desc", TaskStatus.NEW);
+        Epic epic = createEpic();
         int epicId = taskManager.addEpic(epic);
-        Subtask subtask1 = new Subtask("Sub1", "Desc", TaskStatus.DONE, LocalDateTime.now(),
+        LocalDateTime dateTime = LocalDateTime.now();
+        Subtask subtask1 = createSubtask("Subtask1", "description", TaskStatus.DONE, dateTime,
                 Duration.ofMinutes(30), epicId);
-        Subtask subtask2 = new Subtask("Sub2", "Desc", TaskStatus.DONE,
-                LocalDateTime.now().plusHours(1), Duration.ofMinutes(30), epicId);
+        Subtask subtask2 = createSubtask("Subtask2", "Subtask2", TaskStatus.DONE,
+                dateTime.plusHours(1), Duration.ofMinutes(30), epicId);
         taskManager.addSubtask(subtask1);
         taskManager.addSubtask(subtask2);
         Epic updatedEpic = taskManager.getEpicById(epicId);
@@ -53,12 +56,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldSetEpicStatusInProgressWhenSubtasksNewAndDone() {
-        Epic epic = new Epic("Epic1", "Desc", TaskStatus.NEW);
+        Epic epic = createEpic();
         int epicId = taskManager.addEpic(epic);
-        Subtask subtask1 = new Subtask("Sub1", "Desc", TaskStatus.NEW, LocalDateTime.now(),
-                Duration.ofMinutes(30), epicId);
-        Subtask subtask2 = new Subtask("Sub2", "Desc", TaskStatus.DONE,
-                LocalDateTime.now().plusHours(1), Duration.ofMinutes(30), epicId);
+        LocalDateTime dateTime = LocalDateTime.now();
+        Subtask subtask1 = createSubtask(dateTime, Duration.ofMinutes(30), epicId);
+        Subtask subtask2 = createSubtask("Subtask2", "Subtask2", TaskStatus.DONE,
+                dateTime.plusHours(1), Duration.ofMinutes(30), epicId);
         taskManager.addSubtask(subtask1);
         taskManager.addSubtask(subtask2);
         Epic updatedEpic = taskManager.getEpicById(epicId);
@@ -68,12 +71,13 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldSetEpicStatusInProgressWhenSubtasksInProgress() {
-        Epic epic = new Epic("Epic1", "Desc", TaskStatus.NEW);
+        Epic epic = createEpic();
         int epicId = taskManager.addEpic(epic);
-        Subtask subtask1 = new Subtask("Sub1", "Desc", TaskStatus.IN_PROGRESS,
-                LocalDateTime.now(), Duration.ofMinutes(30), epicId);
-        Subtask subtask2 = new Subtask("Sub2", "Desc", TaskStatus.IN_PROGRESS,
-                LocalDateTime.now().plusHours(1), Duration.ofMinutes(30), epicId);
+        LocalDateTime dateTime = LocalDateTime.now();
+        Subtask subtask1 = createSubtask("Subtask1", "description", TaskStatus.IN_PROGRESS, dateTime,
+                Duration.ofMinutes(30), epicId);
+        Subtask subtask2 = createSubtask("Subtask2", "Subtask2", TaskStatus.IN_PROGRESS,
+                dateTime.plusHours(1), Duration.ofMinutes(30), epicId);
         taskManager.addSubtask(subtask1);
         taskManager.addSubtask(subtask2);
         Epic updatedEpic = taskManager.getEpicById(epicId);
@@ -83,10 +87,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldThrowExceptionWhenIntersection() {
-        Task task1 = new Task("Task1", "Desc", TaskStatus.NEW, LocalDateTime.now(),
-                Duration.ofMinutes(60));
-        Task task2 = new Task("Task2", "Desc", TaskStatus.NEW,
-                LocalDateTime.now().plusMinutes(30), Duration.ofMinutes(60));
+        LocalDateTime dateTime = LocalDateTime.now();
+        Task task1 = createTask(dateTime, Duration.ofMinutes(60));
+        Task task2 = createTask(dateTime.plusMinutes(30), Duration.ofMinutes(60));
         taskManager.addTask(task1);
         assertThrows(IllegalArgumentException.class, () -> taskManager.addTask(task2),
                 "Должно быть исключение из-за пересечения");
@@ -94,10 +97,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldNotThrowExceptionWhenNoIntersection() {
-        Task task1 = new Task("Task1", "Desc", TaskStatus.NEW, LocalDateTime.now(),
-                Duration.ofMinutes(60));
-        Task task2 = new Task("Task2", "Desc", TaskStatus.NEW,
-                LocalDateTime.now().plusHours(2), Duration.ofMinutes(60));
+        LocalDateTime dateTime = LocalDateTime.now();
+        Task task1 = createTask(dateTime, Duration.ofMinutes(60));
+        Task task2 = createTask(dateTime.plusHours(2), Duration.ofMinutes(60));
         taskManager.addTask(task1);
         assertDoesNotThrow(() -> taskManager.addTask(task2),
                 "Не должно быть исключения при отсутствии пересечения");
@@ -105,11 +107,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldLinkSubtaskToEpic() {
-        Epic epic = new Epic("Epic1", "Desc", TaskStatus.NEW);
+        Epic epic = createEpic();
         int epicId = taskManager.addEpic(epic);
-        Subtask subtask = new Subtask("Sub1", "Desc", TaskStatus.NEW, LocalDateTime.now(),
-                Duration.ofMinutes(30), epicId);
-        int subtaskId = taskManager.addSubtask(subtask);
+        Subtask subtask = createSubtask(epicId);
+        taskManager.addSubtask(subtask);
         List<Subtask> subtasks = taskManager.getEpicSubtasks(epicId);
         assertEquals(1, subtasks.size(), "Подзадача не добавлена в эпик");
         assertEquals(subtask, subtasks.get(0), "Подзадача не совпадает");
@@ -117,10 +118,9 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void shouldUpdateEpicStatusWhenSubtaskChanges() {
-        Epic epic = new Epic("Epic1", "Desc", TaskStatus.NEW);
+        Epic epic = createEpic();
         int epicId = taskManager.addEpic(epic);
-        Subtask subtask = new Subtask("Sub1", "Desc", TaskStatus.NEW, LocalDateTime.now(),
-                Duration.ofMinutes(30), epicId);
+        Subtask subtask = createSubtask(epicId);
         taskManager.addSubtask(subtask);
         subtask.setTaskStatus(TaskStatus.DONE);
         taskManager.updateSubtask(subtask);

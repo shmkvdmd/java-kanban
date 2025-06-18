@@ -1,11 +1,11 @@
-package models.manager;
+package ru.common.manager;
 
-import exceptions.ManagerSaveException;
-import models.tasks.Epic;
-import models.tasks.Subtask;
-import models.tasks.Task;
-import status.TaskStatus;
-import status.TaskType;
+import ru.common.exceptions.ManagerSaveException;
+import ru.common.models.tasks.Epic;
+import ru.common.models.tasks.Subtask;
+import ru.common.models.tasks.Task;
+import ru.common.models.tasks.status.TaskStatus;
+import ru.common.models.tasks.status.TaskType;
 
 import java.io.*;
 import java.time.Duration;

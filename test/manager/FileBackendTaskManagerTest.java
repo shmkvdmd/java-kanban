@@ -1,17 +1,18 @@
-package models.manager;
+package manager;
 
-import models.tasks.Epic;
-import models.tasks.Subtask;
-import models.tasks.Task;
+import ru.common.models.tasks.Epic;
+import ru.common.models.tasks.Subtask;
+import ru.common.models.tasks.Task;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import status.TaskStatus;
+import ru.common.manager.FileBackendTaskManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import static manager.utility.MockData.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FileBackendTaskManagerTest extends TaskManagerTest<FileBackendTaskManager> {
@@ -34,12 +35,11 @@ class FileBackendTaskManagerTest extends TaskManagerTest<FileBackendTaskManager>
 
     @Test
     void shouldSaveAndLoadTasks() throws IOException {
-        Task task = new Task("Task1", "Desc", TaskStatus.NEW, LocalDateTime.now(),
-                Duration.ofMinutes(30));
-        Epic epic = new Epic("Epic1", "Desc", TaskStatus.NEW);
+        LocalDateTime dateTime = LocalDateTime.now();
+        Task task = createTask(dateTime, Duration.ofMinutes(30));
+        Epic epic = createEpic();
         int epicId = taskManager.addEpic(epic);
-        Subtask subtask = new Subtask("Sub1", "Desc", TaskStatus.NEW,
-                LocalDateTime.now().plusHours(1), Duration.ofMinutes(30), epicId);
+        Subtask subtask = createSubtask(dateTime.plusHours(1), Duration.ofMinutes(30), epicId);
         taskManager.addTask(task);
         taskManager.addSubtask(subtask);
         taskManager.save();

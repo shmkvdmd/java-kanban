@@ -1,6 +1,6 @@
-package models.manager;
+package ru.common.manager;
 
-import models.tasks.Task;
+import ru.common.models.tasks.Task;
 
 import java.util.List;
 
