@@ -51,4 +51,42 @@ class FileBackendTaskManagerTest extends TaskManagerTest<FileBackendTaskManager>
         assertEquals(1, loadedManager.getAllSubtasks().size(), "Подзадачи не загрузились");
         assertEquals(epic.getDuration(), loadedManager.getAllEpics().get(0).getDuration());
     }
+
+    @Test
+    void shouldHandleEpicWithoutSubtasksOnLoad() throws IOException {
+        // Создаем эпик без подзадач
+        Epic epic = createEpic();
+        int epicId = taskManager.addEpic(epic);
+        taskManager.save();
+
+        // Загружаем в новый менеджер
+        FileBackendTaskManager loadedManager = new FileBackendTaskManager(tempFile);
+        loadedManager.loadFromFile(tempFile);
+
+        // Проверяем эпик
+        Epic loadedEpic = loadedManager.getEpicById(epicId);
+        assertNotNull(loadedEpic, "Эпик не загружен");
+        assertTrue(loadedEpic.getSubtasksId().isEmpty(), "Список подзадач должен быть пустым");
+        assertNull(loadedEpic.getStartTime(), "Время начала должно быть null");
+        assertNull(loadedEpic.getDuration(), "Длительность должна быть null");
+        assertNull(loadedEpic.getEndTime(), "Время окончания должно быть null");
+    }
+
+    @Test
+    void shouldResetEpicTimeWhenNoSubtasks() throws IOException {
+        // Создаем эпик с подзадачами
+        Epic epic = createEpic();
+        int epicId = taskManager.addEpic(epic);
+        Subtask subtask = createSubtask(epicId);
+        taskManager.addSubtask(subtask);
+
+        // Удаляем подзадачу
+        taskManager.deleteSubtaskById(subtask.getId());
+
+        // Проверяем сброс времени
+        Epic updatedEpic = taskManager.getEpicById(epicId);
+        assertNull(updatedEpic.getStartTime(), "Время начала должно быть null");
+        assertNull(updatedEpic.getDuration(), "Длительность должна быть null");
+        assertNull(updatedEpic.getEndTime(), "Время окончания должно быть null");
+    }
 }

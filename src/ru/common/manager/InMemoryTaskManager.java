@@ -194,6 +194,7 @@ public class InMemoryTaskManager implements TaskManager {
             subtaskMap.remove(id);
             historyManager.remove(id);
             updateEpicStatus(epic);
+            updateEpicTime(epic);
         } else {
             System.out.println("Подзадача не найдена");
         }
@@ -261,6 +262,10 @@ public class InMemoryTaskManager implements TaskManager {
             epic.setStartTime(currentMinStartTime == LocalDateTime.MAX ? null : currentMinStartTime);
             epic.setEndTime(currentMaxEndTime == LocalDateTime.MAX ? null : currentMaxEndTime);
             epic.setDuration(duration.isZero() ? null : duration);
+        } else {
+            epic.setStartTime(null);
+            epic.setEndTime(null);
+            epic.setDuration(null);
         }
     }
 

@@ -78,6 +78,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
             case TaskType.EPIC: {
                 Epic epic = new Epic(name, description, status);
                 epic.setId(id);
+                updateEpicTime(epic);
                 return epic;
             }
             case TaskType.SUBTASK: {
