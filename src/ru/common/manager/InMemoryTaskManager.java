@@ -15,15 +15,14 @@ public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Epic> epicMap;
     private final HistoryManager historyManager;
     public int idCounter = 0;
-    Comparator<Task> comparator = (task1, task2) -> task1.getStartTime().compareTo(task2.getStartTime());
-    private final TreeSet<Task> prioritizedTasks;
+    private final Set<Task> prioritizedTasks;
 
     public InMemoryTaskManager() {
         this.taskMap = new HashMap<>();
         this.subtaskMap = new HashMap<>();
         this.epicMap = new HashMap<>();
         this.historyManager = Managers.getDefaultHistory();
-        this.prioritizedTasks = new TreeSet<>(comparator);
+        this.prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
     }
 
     public List<Task> getPrioritizedTasks() {

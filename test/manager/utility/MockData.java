@@ -40,6 +40,10 @@ public class MockData {
         return new Subtask("Subtask", "description", TaskStatus.NEW, startTime, duration, epicId);
     }
 
+    public static Subtask createSubtask(TaskStatus status, LocalDateTime dateTime, int epicId) {
+        return createSubtask("Subtask", "description", status, dateTime, Duration.ofMinutes(30), epicId);
+    }
+
     public static Epic createEpic(String name, String description, TaskStatus status) {
         return new Epic(name, description, status, LocalDateTime.now(), Duration.ZERO);
     }

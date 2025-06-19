@@ -49,5 +49,6 @@ class FileBackendTaskManagerTest extends TaskManagerTest<FileBackendTaskManager>
         assertEquals(1, loadedManager.getAllTasks().size(), "Задачи не загрузились");
         assertEquals(1, loadedManager.getAllEpics().size(), "Эпики не загрузились");
         assertEquals(1, loadedManager.getAllSubtasks().size(), "Подзадачи не загрузились");
+        assertEquals(epic.getDuration(), loadedManager.getAllEpics().get(0).getDuration());
     }
 }

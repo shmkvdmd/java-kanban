@@ -21,8 +21,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
     private static final int CSV_DESCRIPTION_INDEX = 4;
     private static final int CSV_START_TIME_INDEX = 5;
     private static final int CSV_DURATION_INDEX = 6;
-    private static final int CSV_END_TIME_INDEX = 7;
-    private static final int CSV_EPIC_ID_INDEX = 8;
+    private static final int CSV_EPIC_ID_INDEX = 7;
 
     public FileBackendTaskManager(File file) {
         if (file == null) {
@@ -53,7 +52,6 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
         String epicId = task.getType() == TaskType.SUBTASK ? String.valueOf(((Subtask) task).getEpicId()) : "";
         String startTimeStr = task.getStartTime() != null ? task.getStartTime().toString() : "";
         String durationStr = task.getDuration() != null ? String.valueOf(task.getDuration().toMinutes()) : "0";
-        String endTimeStr = task.getEndTime() != null ? task.getEndTime().toString() : "";
         String[] list = {
                 String.valueOf(task.getId()),
                 task.getType().toString(),
@@ -62,7 +60,6 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
                 task.getTaskDescription(),
                 startTimeStr,
                 durationStr,
-                endTimeStr,
                 epicId};
         return String.join(",", list);
     }
@@ -86,8 +83,6 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
             case TaskType.SUBTASK: {
                 Subtask subtask = new Subtask(name, description, status, startTime, duration, subtaskEpicId);
                 subtask.setId(id);
-                Epic epic = epicMap.get(subtask.getEpicId());
-                updateEpicTime(epic);
                 return subtask;
             }
             case TaskType.TASK: {
@@ -138,6 +133,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
                 Epic epic = epicMap.get(subtask.getEpicId());
                 if (epic != null) {
                     epic.getSubtasksId().add(taskId);
+                    updateEpicTime(epic);
                 }
                 break;
             }

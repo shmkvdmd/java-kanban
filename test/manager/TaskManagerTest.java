@@ -44,10 +44,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Epic epic = createEpic();
         int epicId = taskManager.addEpic(epic);
         LocalDateTime dateTime = LocalDateTime.now();
-        Subtask subtask1 = createSubtask("Subtask1", "description", TaskStatus.DONE, dateTime,
-                Duration.ofMinutes(30), epicId);
-        Subtask subtask2 = createSubtask("Subtask2", "Subtask2", TaskStatus.DONE,
-                dateTime.plusHours(1), Duration.ofMinutes(30), epicId);
+        Subtask subtask1 = createSubtask(TaskStatus.DONE, dateTime, epicId);
+        Subtask subtask2 = createSubtask(TaskStatus.DONE, dateTime.plusHours(1), epicId);
         taskManager.addSubtask(subtask1);
         taskManager.addSubtask(subtask2);
         Epic updatedEpic = taskManager.getEpicById(epicId);
@@ -60,8 +58,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         int epicId = taskManager.addEpic(epic);
         LocalDateTime dateTime = LocalDateTime.now();
         Subtask subtask1 = createSubtask(dateTime, Duration.ofMinutes(30), epicId);
-        Subtask subtask2 = createSubtask("Subtask2", "Subtask2", TaskStatus.DONE,
-                dateTime.plusHours(1), Duration.ofMinutes(30), epicId);
+        Subtask subtask2 = createSubtask(TaskStatus.DONE, dateTime.plusHours(1), epicId);
         taskManager.addSubtask(subtask1);
         taskManager.addSubtask(subtask2);
         Epic updatedEpic = taskManager.getEpicById(epicId);
@@ -74,10 +71,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         Epic epic = createEpic();
         int epicId = taskManager.addEpic(epic);
         LocalDateTime dateTime = LocalDateTime.now();
-        Subtask subtask1 = createSubtask("Subtask1", "description", TaskStatus.IN_PROGRESS, dateTime,
-                Duration.ofMinutes(30), epicId);
-        Subtask subtask2 = createSubtask("Subtask2", "Subtask2", TaskStatus.IN_PROGRESS,
-                dateTime.plusHours(1), Duration.ofMinutes(30), epicId);
+        Subtask subtask1 = createSubtask(TaskStatus.IN_PROGRESS, dateTime, epicId);
+        Subtask subtask2 = createSubtask(TaskStatus.IN_PROGRESS, dateTime.plusHours(1), epicId);
         taskManager.addSubtask(subtask1);
         taskManager.addSubtask(subtask2);
         Epic updatedEpic = taskManager.getEpicById(epicId);
