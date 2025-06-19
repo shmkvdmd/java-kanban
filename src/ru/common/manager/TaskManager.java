@@ -1,8 +1,8 @@
-package models.manager;
+package ru.common.manager;
 
-import models.tasks.Epic;
-import models.tasks.Subtask;
-import models.tasks.Task;
+import ru.common.models.tasks.Epic;
+import ru.common.models.tasks.Subtask;
+import ru.common.models.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;

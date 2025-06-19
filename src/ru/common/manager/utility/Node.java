@@ -1,6 +1,6 @@
-package models.manager.utility;
+package ru.common.manager.utility;
 
-import models.tasks.Task;
+import ru.common.models.tasks.Task;
 
 public class Node {
     public Task task;

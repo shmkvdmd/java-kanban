@@ -1,4 +1,4 @@
-package models.manager;
+package ru.common.manager;
 
 import java.io.File;
 
