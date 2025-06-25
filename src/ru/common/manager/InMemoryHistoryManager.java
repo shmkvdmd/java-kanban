@@ -1,7 +1,7 @@
-package models.manager;
+package ru.common.manager;
 
-import models.manager.utility.Node;
-import models.tasks.Task;
+import ru.common.manager.utility.Node;
+import ru.common.models.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
