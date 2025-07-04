@@ -1,5 +1,6 @@
 package ru.common.manager;
 
+import ru.common.exceptions.NotFoundException;
 import ru.common.models.tasks.Epic;
 import ru.common.models.tasks.Subtask;
 import ru.common.models.tasks.Task;
@@ -73,6 +74,8 @@ public class InMemoryTaskManager implements TaskManager {
         Task task = taskMap.get(id);
         if (task != null) {
             historyManager.add(task);
+        } else {
+            throw new NotFoundException("Задача не найдена");
         }
         return task;
     }
@@ -82,6 +85,8 @@ public class InMemoryTaskManager implements TaskManager {
         Subtask subtask = subtaskMap.get(id);
         if (subtask != null) {
             historyManager.add(subtask);
+        } else {
+            throw new NotFoundException("Задача не найдена");
         }
         return subtask;
     }
@@ -91,6 +96,8 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = epicMap.get(id);
         if (epic != null) {
             historyManager.add(epic);
+        } else {
+            throw new NotFoundException("Задача не найдена");
         }
         return epic;
     }
@@ -101,8 +108,7 @@ public class InMemoryTaskManager implements TaskManager {
             return -2;
         }
         if (task instanceof Epic || task instanceof Subtask) {
-            System.out.println("Не удалось добавить задачу. Неверный тип");
-            return -1;
+            throw new IllegalArgumentException("Не удалось добавить задачу. Неверный тип");
         }
         addPrioritizedTask(task);
         task.setId(++idCounter);
@@ -120,8 +126,10 @@ public class InMemoryTaskManager implements TaskManager {
             subtaskMap.put(idCounter, subtask);
             updateEpicStatus(epic);
             updateEpicTime(epic);
+            return idCounter;
+        } else {
+            throw new NotFoundException("Эпик не найден");
         }
-        return idCounter;
     }
 
     @Override
@@ -134,8 +142,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task) {
         if (task instanceof Epic || task instanceof Subtask) {
-            System.out.println("Не удалось обновить задачу. Неверный тип");
-            return;
+            throw new IllegalArgumentException("Не удалось обновить задачу. Неверный тип");
         }
         int taskId = task.getId();
         if (taskMap.containsKey(taskId)) {
@@ -143,7 +150,7 @@ public class InMemoryTaskManager implements TaskManager {
             addPrioritizedTask(task);
             taskMap.put(taskId, task);
         } else {
-            System.out.println("Не удалось обновить задачу. Задача не найдена");
+            throw new NotFoundException("Не удалось обновить задачу. Задача не найдена");
         }
     }
 
@@ -158,7 +165,7 @@ public class InMemoryTaskManager implements TaskManager {
             updateEpicStatus(epic);
             updateEpicTime(epic);
         } else {
-            System.out.println("Не удалось обновить подзадачу. Подзадача не найдена");
+            throw new NotFoundException("Не удалось обновить подзадачу. Подзадача не найдена");
         }
     }
 
@@ -169,7 +176,7 @@ public class InMemoryTaskManager implements TaskManager {
             epicMap.put(epic.getId(), epic);
             updateEpicStatus(epic);
         } else {
-            System.out.println("Не удалось обновить эпик. Эпик не найден");
+            throw new NotFoundException("Не удалось обновить эпик. Эпик не найден");
         }
     }
 
@@ -180,7 +187,7 @@ public class InMemoryTaskManager implements TaskManager {
             taskMap.remove(id);
             historyManager.remove(id);
         } else {
-            System.out.println("Задача не найдена");
+            throw new NotFoundException("Задача не найдена");
         }
     }
 
@@ -196,7 +203,7 @@ public class InMemoryTaskManager implements TaskManager {
             updateEpicStatus(epic);
             updateEpicTime(epic);
         } else {
-            System.out.println("Подзадача не найдена");
+            throw new NotFoundException("Подзадача не найден");
         }
     }
 
@@ -208,7 +215,7 @@ public class InMemoryTaskManager implements TaskManager {
             epicMap.remove(id);
             historyManager.remove(id);
         } else {
-            System.out.println("Эпик не найден");
+            throw new NotFoundException("Эпик не найден");
         }
     }
 

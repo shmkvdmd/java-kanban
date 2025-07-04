@@ -20,7 +20,7 @@ public class Epic extends Task {
     public Epic(String taskName, String taskDescription, TaskStatus taskStatus, LocalDateTime startTime,
                 Duration duration) {
         super(taskName, taskDescription, taskStatus, startTime, duration);
-        subtasksId = new ArrayList<>(); // Возможно стоит использовать set?
+        subtasksId = new ArrayList<>();
     }
 
     @Override
