@@ -7,7 +7,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class Subtask extends Task {
-    private final int epicId;
+    private final Integer epicId;
 
     public Subtask(String taskName, String taskDescription, TaskStatus taskStatus,
                    LocalDateTime startTime, Duration duration, int epicId) {
@@ -20,7 +20,7 @@ public class Subtask extends Task {
         return TaskType.SUBTASK;
     }
 
-    public int getEpicId() {
+    public Integer getEpicId() {
         return epicId;
     }
 
