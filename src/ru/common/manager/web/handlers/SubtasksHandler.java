@@ -49,12 +49,12 @@ public final class SubtasksHandler extends BaseHttpHandler {
             String body = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
             Optional<Integer> optId = getTaskIdFromJson(body);
             if (optId.isEmpty()) {
-                Subtask subtask = parseSubtaskFromJson(body);
+                Subtask subtask = gson.fromJson(body, Subtask.class);
                 taskManager.addSubtask(subtask);
                 writeResponse(httpExchange, "", 201);
                 return;
             }
-            Subtask subtask = parseSubtaskFromJson(body);
+            Subtask subtask = gson.fromJson(body, Subtask.class);
             subtask.setId(optId.get());
             taskManager.updateSubtask(subtask);
             writeResponse(httpExchange, "", 201);
@@ -63,21 +63,6 @@ public final class SubtasksHandler extends BaseHttpHandler {
         } catch (NotFoundException | IOException e) {
             writeResponse(httpExchange, HttpMessageConstants.INTERNAL_SERVER_ERROR, 500);
         }
-    }
-
-    private Subtask parseSubtaskFromJson(String body) throws IOException {
-        JsonElement jsonElement = JsonParser.parseString(body);
-        if (!jsonElement.isJsonObject()) {
-            throw new NotFoundException(ExceptionMessageConstants.JSON_PARSE_ERROR);
-        }
-        JsonObject jsonObject = jsonElement.getAsJsonObject();
-        String taskName = jsonObject.get("taskName").getAsString();
-        String taskDescription = jsonObject.get("taskDescription").getAsString();
-        TaskStatus taskStatus = TaskStatus.valueOf(jsonObject.get("taskStatus").getAsString());
-        LocalDateTime localDateTime = LocalDateTime.parse(jsonObject.get("startTime").getAsString());
-        Duration duration = Duration.ofMinutes(jsonObject.get("duration").getAsInt());
-        int epicId = jsonObject.get("epicId").getAsInt();
-        return new Subtask(taskName, taskDescription, taskStatus, localDateTime, duration, epicId);
     }
 
     private void handleDeleteSubtask(HttpExchange httpExchange) throws IOException {

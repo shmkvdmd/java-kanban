@@ -6,6 +6,7 @@ import ru.common.models.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface TaskManager {
     HistoryManager getHistoryManager();

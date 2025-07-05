@@ -5,6 +5,10 @@ public final class ExceptionMessageConstants {
     public static final String NOT_FOUND_EPIC = "Эпик не найден";
     public static final String NOT_FOUND_SUBTASK = "Подзадача не найдена";
 
+    public static final String NO_TASK_DATA = "Отсутствуют необходимые поля задачи";
+    public static final String NO_SUBTASK_DATA = "Отсутствуют необходимые поля подзадачи";
+    public static final String NO_EPIC_DATA = "Отсутствуют необходимые поля эпика";
+
     public static final String ADD_WRONG_TYPE = "Не удалось добавить задачу. Неверный тип";
     public static final String UPDATE_WRONG_TYPE = "Не удалось обновить задачу. Неверный тип";
 

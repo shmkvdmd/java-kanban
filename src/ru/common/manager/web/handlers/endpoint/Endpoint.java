@@ -36,16 +36,18 @@ public enum Endpoint {
     }
 
     public static Endpoint getEndpoint(String requestPath, String requestMethod) {
+        String[] parts = requestPath.split("/");
+        int partsCount = parts.length;
+
         for (Endpoint endpoint : values()) {
-            if (requestPath.startsWith(endpoint.path)
-                    && requestMethod.equalsIgnoreCase(endpoint.method)) {
-                if (endpoint.containsId && requestPath.split("/").length == 3) {
+            if (requestPath.startsWith(endpoint.path) && requestMethod.equalsIgnoreCase(endpoint.method)) {
+                if (endpoint == GET_EPIC_SUBTASKS && partsCount == 4 && parts[3].equals("subtasks")) {
+                    return GET_EPIC_SUBTASKS;
+                }
+                if (endpoint.containsId && partsCount == 3) {
                     return endpoint;
                 }
-                if (endpoint.containsId && requestPath.split("/").length == 4) {
-                    return endpoint;
-                }
-                if (!endpoint.containsId && requestPath.split("/").length == 2) {
+                if (!endpoint.containsId && partsCount == 2) {
                     return endpoint;
                 }
             }

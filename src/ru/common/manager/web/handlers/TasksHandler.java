@@ -47,12 +47,12 @@ public final class TasksHandler extends BaseHttpHandler {
             String body = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
             Optional<Integer> optId = getTaskIdFromJson(body);
             if (optId.isEmpty()) {
-                Task task = parseTaskFromJson(body);
+                Task task = gson.fromJson(body, Task.class);
                 taskManager.addTask(task);
                 writeResponse(httpExchange, "", 201);
                 return;
             }
-            Task task = parseTaskFromJson(body);
+            Task task = gson.fromJson(body, Task.class);
             task.setId(optId.get());
             taskManager.updateTask(task);
             writeResponse(httpExchange, "", 201);
@@ -61,20 +61,6 @@ public final class TasksHandler extends BaseHttpHandler {
         } catch (NotFoundException | IOException e) {
             writeResponse(httpExchange, HttpMessageConstants.INTERNAL_SERVER_ERROR, 500);
         }
-    }
-
-    private Task parseTaskFromJson(String body) throws IOException {
-        JsonElement jsonElement = JsonParser.parseString(body);
-        if (!jsonElement.isJsonObject()) {
-            throw new NotFoundException(ExceptionMessageConstants.JSON_PARSE_ERROR);
-        }
-        JsonObject jsonObject = jsonElement.getAsJsonObject();
-        String taskName = jsonObject.get("taskName").getAsString();
-        String taskDescription = jsonObject.get("taskDescription").getAsString();
-        TaskStatus taskStatus = TaskStatus.valueOf(jsonObject.get("taskStatus").getAsString());
-        LocalDateTime localDateTime = LocalDateTime.parse(jsonObject.get("startTime").getAsString());
-        Duration duration = Duration.ofMinutes(jsonObject.get("duration").getAsInt());
-        return new Task(taskName, taskDescription, taskStatus, localDateTime, duration);
     }
 
     private void handleDeleteTask(HttpExchange httpExchange) throws IOException {

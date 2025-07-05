@@ -42,6 +42,18 @@ public final class EpicsHandler extends BaseHttpHandler {
         }
     }
 
+    private Epic parseEpicFromJson(String body) throws IOException {
+        JsonElement jsonElement = JsonParser.parseString(body);
+        if (!jsonElement.isJsonObject()) {
+            throw new NotFoundException(ExceptionMessageConstants.JSON_PARSE_ERROR);
+        }
+        JsonObject jsonObject = jsonElement.getAsJsonObject();
+        String taskName = jsonObject.get("taskName").getAsString();
+        String taskDescription = jsonObject.get("taskDescription").getAsString();
+        TaskStatus taskStatus = TaskStatus.valueOf(jsonObject.get("taskStatus").getAsString());
+        return new Epic(taskName, taskDescription, taskStatus);
+    }
+
     private void handleCreateEpic(HttpExchange httpExchange) throws IOException {
         try {
             String body = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
@@ -56,18 +68,6 @@ public final class EpicsHandler extends BaseHttpHandler {
         } catch (NotFoundException | IOException e) {
             writeResponse(httpExchange, HttpMessageConstants.INTERNAL_SERVER_ERROR, 500);
         }
-    }
-
-    private Epic parseEpicFromJson(String body) throws IOException {
-        JsonElement jsonElement = JsonParser.parseString(body);
-        if (!jsonElement.isJsonObject()) {
-            throw new NotFoundException(ExceptionMessageConstants.JSON_PARSE_ERROR);
-        }
-        JsonObject jsonObject = jsonElement.getAsJsonObject();
-        String taskName = jsonObject.get("taskName").getAsString();
-        String taskDescription = jsonObject.get("taskDescription").getAsString();
-        TaskStatus taskStatus = TaskStatus.valueOf(jsonObject.get("taskStatus").getAsString());
-        return new Epic(taskName, taskDescription, taskStatus);
     }
 
     private void handleDeleteEpic(HttpExchange httpExchange) throws IOException {
