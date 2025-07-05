@@ -4,28 +4,20 @@ import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import ru.common.exceptions.NotFoundException;
+import ru.common.exceptions.constants.ExceptionMessageConstants;
 import ru.common.manager.TaskManager;
-import ru.common.manager.web.jsonadapter.DurationAdapter;
-import ru.common.manager.web.jsonadapter.LocalDateTimeAdapter;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 public abstract class BaseHttpHandler implements HttpHandler {
     protected final TaskManager taskManager;
     protected final Gson gson;
 
-    public BaseHttpHandler(TaskManager taskManager) {
+    public BaseHttpHandler(TaskManager taskManager, Gson gson) {
         this.taskManager = taskManager;
-        this.gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .serializeNulls()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .registerTypeAdapter(Duration.class, new DurationAdapter())
-                .create();
+        this.gson = gson;
     }
 
     Optional<Integer> getTaskId(HttpExchange httpExchange) {
@@ -49,7 +41,7 @@ public abstract class BaseHttpHandler implements HttpHandler {
     Optional<Integer> getTaskIdFromJson(String body) throws IOException {
         JsonElement jsonElement = JsonParser.parseString(body);
         if (!jsonElement.isJsonObject()) {
-            throw new NotFoundException("Ошибка парсинга задачи из JSON");
+            throw new NotFoundException(ExceptionMessageConstants.JSON_PARSE_ERROR);
         }
         JsonObject jsonObject = jsonElement.getAsJsonObject();
         JsonElement idElement = jsonObject.get("id");

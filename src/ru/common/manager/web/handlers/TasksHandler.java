@@ -3,6 +3,8 @@ package ru.common.manager.web.handlers;
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import ru.common.exceptions.NotFoundException;
+import ru.common.exceptions.constants.ExceptionMessageConstants;
+import ru.common.exceptions.constants.HttpMessageConstants;
 import ru.common.manager.TaskManager;
 import ru.common.manager.web.handlers.endpoint.Endpoint;
 import ru.common.models.tasks.Task;
@@ -16,28 +18,8 @@ import java.util.Optional;
 
 public final class TasksHandler extends BaseHttpHandler {
 
-    public TasksHandler(TaskManager taskManager) {
-        super(taskManager);
-    }
-
-    private Endpoint getEndpoint(String requestPath, String requestMethod) {
-        String[] pathParts = requestPath.split("/");
-
-        if (pathParts.length == 2) {
-            return switch (requestMethod) {
-                case "GET" -> Endpoint.GET_TASKS;
-                case "POST" -> Endpoint.POST_TASK;
-                default -> Endpoint.UNKNOWN;
-            };
-        }
-        if (pathParts.length == 3) {
-            return switch (requestMethod) {
-                case "GET" -> Endpoint.GET_TASK_BY_ID;
-                case "DELETE" -> Endpoint.DELETE_TASK;
-                default -> Endpoint.UNKNOWN;
-            };
-        }
-        return Endpoint.UNKNOWN;
+    public TasksHandler(TaskManager taskManager, Gson gson) {
+        super(taskManager, gson);
     }
 
     private void handleGetTasks(HttpExchange httpExchange) throws IOException {
@@ -48,7 +30,7 @@ public final class TasksHandler extends BaseHttpHandler {
     private void handleGetTaskById(HttpExchange httpExchange) throws IOException {
         Optional<Integer> idOpt = getTaskId(httpExchange);
         if (idOpt.isEmpty()) {
-            writeResponse(httpExchange, "Not Found", 404);
+            writeResponse(httpExchange, HttpMessageConstants.NOT_FOUND, 404);
             return;
         }
         try {
@@ -56,11 +38,10 @@ public final class TasksHandler extends BaseHttpHandler {
             String response = gson.toJson(task);
             writeResponse(httpExchange, response, 200);
         } catch (NotFoundException e) {
-            writeResponse(httpExchange, "Not Found", 404);
+            writeResponse(httpExchange, HttpMessageConstants.NOT_FOUND, 404);
         }
     }
 
-    // Возможно подобные методы также вынести в базовый класс с помощью дженериков
     private void handleCreateOrUpdateTask(HttpExchange httpExchange) throws IOException {
         try {
             String body = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
@@ -76,16 +57,16 @@ public final class TasksHandler extends BaseHttpHandler {
             taskManager.updateTask(task);
             writeResponse(httpExchange, "", 201);
         } catch (IllegalArgumentException e) {
-            writeResponse(httpExchange, "Not Acceptable", 406);
+            writeResponse(httpExchange, HttpMessageConstants.NOT_ACCEPTABLE, 406);
         } catch (NotFoundException | IOException e) {
-            writeResponse(httpExchange, "Internal Server Error", 500);
+            writeResponse(httpExchange, HttpMessageConstants.INTERNAL_SERVER_ERROR, 500);
         }
     }
 
     private Task parseTaskFromJson(String body) throws IOException {
         JsonElement jsonElement = JsonParser.parseString(body);
         if (!jsonElement.isJsonObject()) {
-            throw new NotFoundException("Ошибка парсинга задачи из JSON");
+            throw new NotFoundException(ExceptionMessageConstants.JSON_PARSE_ERROR);
         }
         JsonObject jsonObject = jsonElement.getAsJsonObject();
         String taskName = jsonObject.get("taskName").getAsString();
@@ -99,26 +80,26 @@ public final class TasksHandler extends BaseHttpHandler {
     private void handleDeleteTask(HttpExchange httpExchange) throws IOException {
         Optional<Integer> idOpt = getTaskId(httpExchange);
         if (idOpt.isEmpty()) {
-            writeResponse(httpExchange, "Not Found", 404);
+            writeResponse(httpExchange, HttpMessageConstants.NOT_FOUND, 404);
             return;
         }
         try {
             taskManager.deleteTaskById(idOpt.get());
-            writeResponse(httpExchange, "Задача удалена", 200);
+            writeResponse(httpExchange, HttpMessageConstants.TASK_DELETED, 200);
         } catch (NotFoundException e) {
-            writeResponse(httpExchange, "Not Found", 404);
+            writeResponse(httpExchange, HttpMessageConstants.NOT_FOUND, 404);
         }
     }
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        Endpoint endpoint = getEndpoint(httpExchange.getRequestURI().getPath(), httpExchange.getRequestMethod());
+        Endpoint endpoint = Endpoint.getEndpoint(httpExchange.getRequestURI().getPath(), httpExchange.getRequestMethod());
         switch (endpoint) {
             case Endpoint.GET_TASKS -> handleGetTasks(httpExchange);
             case Endpoint.GET_TASK_BY_ID -> handleGetTaskById(httpExchange);
             case Endpoint.POST_TASK -> handleCreateOrUpdateTask(httpExchange);
             case Endpoint.DELETE_TASK -> handleDeleteTask(httpExchange);
-            case Endpoint.UNKNOWN -> writeResponse(httpExchange, "Internal Server Error", 500);
+            case Endpoint.UNKNOWN -> writeResponse(httpExchange, HttpMessageConstants.INTERNAL_SERVER_ERROR, 500);
         }
     }
 }
