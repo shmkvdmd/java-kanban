@@ -27,8 +27,10 @@ class HttpTaskServerTest {
     HttpTaskServer taskServer;
     Gson gson;
     HttpClient client;
+
     HttpTaskServerTest() throws IOException {
     }
+
     @BeforeEach
     public void setUp() throws IOException {
         manager = new InMemoryTaskManager();
@@ -41,10 +43,12 @@ class HttpTaskServerTest {
         manager.deleteSubtasks();
         manager.deleteEpics();
     }
+
     @AfterEach
     public void shutDown() {
         taskServer.stopServer();
     }
+
     // Тест на создание задачи с невалидными данными
     @Test
     public void testCreateTaskWithInvalidData() throws IOException, InterruptedException {

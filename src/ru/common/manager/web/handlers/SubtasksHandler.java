@@ -1,22 +1,15 @@
 package ru.common.manager.web.handlers;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
 import ru.common.exceptions.NotFoundException;
-import ru.common.exceptions.constants.ExceptionMessageConstants;
 import ru.common.exceptions.constants.HttpMessageConstants;
 import ru.common.manager.TaskManager;
 import ru.common.manager.web.handlers.endpoint.Endpoint;
 import ru.common.models.tasks.Subtask;
-import ru.common.models.tasks.status.TaskStatus;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 public final class SubtasksHandler extends BaseHttpHandler {
