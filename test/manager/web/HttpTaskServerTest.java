@@ -7,18 +7,12 @@ import org.junit.jupiter.api.Test;
 import ru.common.manager.InMemoryTaskManager;
 import ru.common.manager.TaskManager;
 import ru.common.manager.web.HttpTaskServer;
-import ru.common.models.tasks.Epic;
-import ru.common.models.tasks.Subtask;
-import ru.common.models.tasks.status.TaskStatus;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
