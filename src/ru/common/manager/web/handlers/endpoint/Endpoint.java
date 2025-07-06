@@ -15,7 +15,7 @@ public enum Endpoint {
     GET_EPIC_BY_ID("/epics", "GET", true),
     GET_EPIC_SUBTASKS("/epics", "GET"),
     POST_EPIC("/epics", "POST"),
-    DELETE_EPIC("/epics", "DELETE"),
+    DELETE_EPIC("/epics", "DELETE", true),
 
     GET_HISTORY("/history", "GET"),
     GET_PRIORITIZED_TASKS("/prioritized", "GET"),
