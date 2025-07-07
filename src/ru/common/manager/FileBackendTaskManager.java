@@ -1,6 +1,7 @@
 package ru.common.manager;
 
 import ru.common.exceptions.ManagerSaveException;
+import ru.common.exceptions.constants.ExceptionMessageConstants;
 import ru.common.models.tasks.Epic;
 import ru.common.models.tasks.Subtask;
 import ru.common.models.tasks.Task;
@@ -25,7 +26,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
 
     public FileBackendTaskManager(File file) {
         if (file == null) {
-            throw new IllegalArgumentException("Файл не создан");
+            throw new IllegalArgumentException(ExceptionMessageConstants.FILE_NULL);
         }
         this.file = file;
     }
@@ -38,7 +39,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
             writeToFile(bw, epicMap);
             writeToFile(bw, subtaskMap);
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка сохранения записи в файл " + file.getAbsolutePath());
+            throw new ManagerSaveException(ExceptionMessageConstants.FILE_SAVE_ERROR + " " + file.getAbsolutePath());
         }
     }
 
@@ -92,7 +93,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
                 return task;
             }
             default: {
-                throw new IllegalArgumentException("Неизвестный тип задачи: " + type);
+                throw new IllegalArgumentException(ExceptionMessageConstants.UNKNOWN_TYPE + ": " + type);
             }
         }
     }
@@ -118,7 +119,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
             idCounter = maxId;
             save();
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка при чтении данных из файла " + file.getAbsolutePath());
+            throw new ManagerSaveException(ExceptionMessageConstants.FILE_READ_ERROR + " " + file.getAbsolutePath());
         }
     }
 
@@ -143,7 +144,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
                 break;
             }
             default: {
-                throw new IllegalArgumentException("Неизвестный тип задачи: " + task.getType());
+                throw new IllegalArgumentException(ExceptionMessageConstants.UNKNOWN_TYPE + ": " + task.getType());
             }
         }
     }
